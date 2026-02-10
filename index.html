@@ -3,382 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeoBank | Premium Digital Banking</title>
+    <title>NeoBank | Садыков Маир</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --accent: #a78bfa;
-            --bg-dark: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-main: #f8fafc;
+            --primary: #4f46e5;
+            --accent: #818cf8;
+            --bg: #0b0e14;
+            --card: #161b26;
+            --text: #ffffff;
             --text-dim: #94a3b8;
             --success: #10b981;
-            --danger: #ef4444;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(167, 139, 250, 0.1) 0%, transparent 50%);
+            background-color: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            color: var(--text-main);
             overflow-x: hidden;
         }
 
-        .app-container {
-            max-width: 480px;
+        .app-shell {
+            max-width: 430px;
             margin: 0 auto;
             min-height: 100vh;
-            position: relative;
+            display: flex;
+            flex-direction: column;
             padding-bottom: 90px;
         }
 
-        /* Header */
-        .header {
-            padding: 25px 20px;
+        /* Top Bar */
+        .top-bar {
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-icon {
-            width: 35px;
-            height: 35px;
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px;
         }
+        .user-name { font-weight: 600; font-size: 16px; }
 
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .user-profile {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        /* Balance Card */
-        .balance-section {
-            padding: 0 20px;
-            margin-bottom: 25px;
-        }
-
+        /* Main Card */
         .main-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 28px;
+            margin: 10px 20px 25px;
             padding: 25px;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(145deg, #1e2533, #161b26);
+            border-radius: 28px;
             border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
-        .main-card::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 150px;
-            height: 150px;
-            background: var(--primary);
-            filter: blur(80px);
-            opacity: 0.2;
-        }
+        .balance-label { color: var(--text-dim); font-size: 13px; margin-bottom: 5px; }
+        .balance-val { font-size: 36px; font-weight: 700; margin-bottom: 25px; }
 
-        .balance-label {
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-bottom: 5px;
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-main {
+            padding: 14px; border: none; border-radius: 16px;
+            background: rgba(255,255,255,0.06); color: white;
+            font-weight: 500; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; gap: 8px; transition: 0.2s;
         }
-
-        .balance-amount {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 14px;
-            border: none;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-
-        .action-btn:active {
-            transform: scale(0.95);
-            background: rgba(255,255,255,0.1);
-        }
+        .btn-main:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+        .btn-primary { background: var(--primary); }
 
         /* Sections */
-        .section-header {
-            padding: 0 20px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-header h3 {
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        .section-header span {
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        /* Horizontal List (Currencies) */
-        .scroll-x {
-            display: flex;
-            gap: 12px;
-            padding: 0 20px 20px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .scroll-x::-webkit-scrollbar { display: none; }
-
-        .mini-card {
-            min-width: 130px;
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .mini-card-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .mini-card-value {
-            font-weight: 600;
-            font-size: 15px;
-        }
+        .sec-header { padding: 0 20px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .sec-header h3 { font-size: 17px; font-weight: 600; }
+        .sec-header span { color: var(--accent); font-size: 13px; font-weight: 500; }
 
         /* Transactions */
-        .transaction-item {
-            display: flex;
-            align-items: center;
-            padding: 16px 20px;
-            margin: 0 20px 10px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.03);
+        .tx-container { padding: 0 20px; }
+        .tx-item {
+            background: var(--card);
+            padding: 15px; border-radius: 20px; margin-bottom: 10px;
+            display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.03);
         }
-
         .tx-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-right: 15px;
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; margin-right: 15px;
         }
-
-        .tx-details { flex: 1; }
-        .tx-name { font-weight: 500; font-size: 15px; margin-bottom: 2px; }
+        .tx-info { flex: 1; }
+        .tx-title { font-weight: 500; font-size: 15px; margin-bottom: 2px; }
         .tx-date { font-size: 12px; color: var(--text-dim); }
-        .tx-amount { font-weight: 600; font-size: 15px; text-align: right; }
+        .tx-amount { font-weight: 600; font-size: 15px; }
         .tx-plus { color: var(--success); }
-        .tx-minus { color: var(--text-main); }
 
-        /* Navigation */
-        .nav-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 8px;
-            display: flex;
-            justify-content: space-around;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1000;
+        /* Nav Bar */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 430px;
+            background: rgba(11, 14, 20, 0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 15px 10px 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
+        .nav-item { border: none; background: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 20px; }
 
-        .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 20px;
-            border: none;
-            background: none;
-            color: var(--text-dim);
-            gap: 4px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
+        /* Page View */
+        .view { padding: 20px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .nav-btn.active {
-            color: var(--primary);
-        }
-
-        .nav-btn i { font-size: 20px; }
-        .nav-btn span { font-size: 10px; font-weight: 500; }
-
-        /* Pages & Forms */
-        .page-content {
-            padding: 20px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .form-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            margin-left: 4px;
-        }
-
+        .form-card { background: var(--card); padding: 25px; border-radius: 24px; }
+        .input-box { margin-bottom: 20px; }
+        .input-box label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
         .input-field {
-            width: 100%;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 14px;
-            padding: 16px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: 0.2s;
+            width: 100%; background: #000; border: 1px solid #333;
+            padding: 15px; border-radius: 12px; color: white; font-size: 16px; outline: none;
+        }
+        .input-field:focus { border-color: var(--primary); }
+        .action-button {
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            background: var(--primary); color: white; font-weight: 600; font-size: 16px; cursor: pointer;
         }
 
-        .input-field:focus {
-            border-color: var(--primary);
-            background: rgba(0,0,0,0.3);
-        }
-
-        .main-btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
-        }
-
-        /* Success Modal */
+        /* Modal */
         .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;
         }
-
-        .modal-box {
-            background: #1e293b;
-            width: 100%;
-            max-width: 320px;
-            border-radius: 30px;
-            padding: 40px 20px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+        .modal-inner {
+            background: var(--card); padding: 35px 25px; border-radius: 30px;
+            text-align: center; width: 100%; max-width: 320px;
         }
-
-        .success-check {
-            width: 70px;
-            height: 70px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 35px;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--text-dim);
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-size: 14px;
+        .check-icon {
+            width: 60px; height: 60px; background: var(--success); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+            font-size: 30px;
         }
     </style>
 </head>
@@ -386,212 +151,147 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
 
         function App() {
             const [page, setPage] = useState('home');
-            const [balance, setBalance] = useState(284500.50);
-            const [loading, setLoading] = useState(false);
-            const [showSuccess, setShowSuccess] = useState(false);
-            
-            // Данные курсов
-            const rates = { usd: 91.2, eur: 98.5, btc: 5842000 };
+            const [balance, setBalance] = useState(384200.50);
+            const [showModal, setShowModal] = useState(false);
+            const [history, setHistory] = useState([
+                { id: 1, title: 'Перевод от СБП', date: 'Сегодня, 14:20', amt: '+5 000 ₽', isPlus: true, icon: '📲' },
+                { id: 2, title: 'Супермаркет «Пятёрочка»', date: 'Сегодня, 09:15', amt: '-1 240 ₽', isPlus: false, icon: '🛒' },
+                { id: 3, title: 'Яндекс Такси', date: 'Вчера, 21:00', amt: '-450 ₽', isPlus: false, icon: '🚕' },
+                { id: 4, title: 'Мосэнергосбыт', date: '10 фев, 11:30', amt: '-3 100 ₽', isPlus: false, icon: '⚡' }
+            ]);
 
-            // Состояние формы перевода
-            const [transferData, setTransferData] = useState({ phone: '', amount: '' });
+            const [amountInput, setAmountInput] = useState('');
+            const [targetInput, setTargetInput] = useState('');
 
-            const handleTransfer = (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setTimeout(() => {
-                    setBalance(prev => prev - Number(transferData.amount));
-                    setLoading(false);
-                    setShowSuccess(true);
-                }, 1500);
+            const formatRub = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(val);
+
+            const handleAction = (type) => {
+                const val = parseFloat(amountInput);
+                if (!val || val <= 0) return;
+
+                setBalance(prev => prev - val);
+                const newTx = {
+                    id: Date.now(),
+                    title: type === 'transfer' ? `Перевод: ${targetInput}` : 'Вывод средств',
+                    date: 'Только что',
+                    amt: `-${val.toLocaleString()} ₽`,
+                    isPlus: false,
+                    icon: type === 'transfer' ? '👤' : '💳'
+                };
+                setHistory([newTx, ...history]);
+                setShowModal(true);
             };
 
-            const formatCurrency = (val) => {
-                return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(val);
+            const resetAndHome = () => {
+                setShowModal(false);
+                setPage('home');
+                setAmountInput('');
+                setTargetInput('');
             };
-
-            const SuccessModal = () => (
-                <div className="modal">
-                    <div className="modal-box">
-                        <div className="success-check">✓</div>
-                        <h2 style={{marginBottom: '10px'}}>Готово!</h2>
-                        <p style={{color: '#94a3b8', fontSize: '14px', marginBottom: '25px'}}>
-                            Операция успешно выполнена. Деньги будут зачислены мгновенно.
-                        </p>
-                        <button className="main-btn" onClick={() => {setShowSuccess(false); setPage('home');}}>
-                            Понятно
-                        </button>
-                    </div>
-                </div>
-            );
 
             return (
-                <div className="app-container">
-                    {showSuccess && <SuccessModal />}
+                <div className="app-shell">
+                    {showModal && (
+                        <div className="modal">
+                            <div className="modal-inner">
+                                <div className="check-icon">✓</div>
+                                <h2 style={{marginBottom: '10px'}}>Готово!</h2>
+                                <p style={{color: '#94a3b8', marginBottom: '25px'}}>Операция успешно выполнена. Баланс обновлен.</p>
+                                <button className="action-button" onClick={resetAndHome}>Отлично</button>
+                            </div>
+                        </div>
+                    )}
 
-                    {/* Домашняя страница */}
                     {page === 'home' && (
                         <>
-                            <header className="header">
-                                <div className="logo-group">
-                                    <div className="logo-icon">N</div>
-                                    <div className="logo-text">NeoBank</div>
+                            <div className="top-bar">
+                                <div className="user-info">
+                                    <div className="avatar">СМ</div>
+                                    <div className="user-name">Садыков Маир</div>
                                 </div>
-                                <div className="user-profile" onClick={() => setPage('settings')}>
-                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
-                                </div>
-                            </header>
+                                <div style={{fontSize: '20px'}}>🔔</div>
+                            </div>
 
-                            <div className="balance-section">
-                                <div className="main-card">
-                                    <div className="balance-label">Ваш баланс</div>
-                                    <div className="balance-amount">{formatCurrency(balance)}</div>
-                                    <div className="quick-actions">
-                                        <button className="action-btn" onClick={() => setPage('transfer')}>
-                                            <span>💸</span> Перевести
-                                        </button>
-                                        <button className="action-btn" onClick={() => setPage('withdraw')}>
-                                            <span>💳</span> Вывести
-                                        </button>
-                                    </div>
+                            <div className="main-card">
+                                <div className="balance-label">Ваш баланс</div>
+                                <div className="balance-val">{formatRub(balance)}</div>
+                                <div className="btn-group">
+                                    <button className="btn-main btn-primary" onClick={() => setPage('transfer')}>
+                                        <span>💸</span> Перевести
+                                    </button>
+                                    <button className="btn-main" onClick={() => setPage('withdraw')}>
+                                        <span>💳</span> Вывести
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="section-header">
-                                <h3>Курсы валют</h3>
-                                <span>Обновить</span>
-                            </div>
-                            <div className="scroll-x">
-                                <div className="mini-card">
-                                    <span className="mini-card-label">USD / RUB</span>
-                                    <div className="mini-card-value">{rates.usd} ₽</div>
-                                </div>
-                                <div className="mini-card">
-                                    <span className="mini-card-label">EUR / RUB</span>
-                                    <div className="mini-card-value">{rates.eur} ₽</div>
-                                </div>
-                                <div className="mini-card">
-                                    <span className="mini-card-label">Bitcoin</span>
-                                    <div className="mini-card-value">5.8M ₽</div>
-                                </div>
-                            </div>
-
-                            <div className="section-header">
-                                <h3>Последние операции</h3>
+                            <div className="sec-header">
+                                <h3>История операций</h3>
                                 <span>Все</span>
                             </div>
-                            <div className="transactions">
-                                <div className="transaction-item">
-                                    <div className="tx-icon" style={{background: 'rgba(16, 185, 129, 0.1)'}}>🟢</div>
-                                    <div className="tx-details">
-                                        <div className="tx-name">Пополнение счета</div>
-                                        <div className="tx-date">Сегодня, 12:40</div>
+
+                            <div className="tx-container">
+                                {history.map(tx => (
+                                    <div className="tx-item" key={tx.id}>
+                                        <div className="tx-icon">{tx.icon}</div>
+                                        <div className="tx-info">
+                                            <div className="tx-title">{tx.title}</div>
+                                            <div className="tx-date">{tx.date}</div>
+                                        </div>
+                                        <div className={`tx-amount ${tx.isPlus ? 'tx-plus' : ''}`}>
+                                            {tx.amt}
+                                        </div>
                                     </div>
-                                    <div className="tx-amount tx-plus">+45 000 ₽</div>
-                                </div>
-                                <div className="transaction-item">
-                                    <div className="tx-icon" style={{background: 'rgba(255, 255, 255, 0.05)'}}>☕</div>
-                                    <div className="tx-details">
-                                        <div className="tx-name">Starbucks Coffee</div>
-                                        <div className="tx-date">Вчера, 09:15</div>
-                                    </div>
-                                    <div className="tx-amount tx-minus">-450 ₽</div>
-                                </div>
-                                <div className="transaction-item">
-                                    <div className="tx-icon" style={{background: 'rgba(99, 102, 241, 0.1)'}}>📱</div>
-                                    <div className="tx-details">
-                                        <div className="tx-name">App Store</div>
-                                        <div className="tx-date">8 фев, 21:00</div>
-                                    </div>
-                                    <div className="tx-amount tx-minus">-990 ₽</div>
-                                </div>
+                                ))}
                             </div>
                         </>
                     )}
 
-                    {/* Страница Перевода */}
-                    {page === 'transfer' && (
-                        <div className="page-content">
-                            <button className="back-link" onClick={() => setPage('home')}>← Назад на главную</button>
-                            <h2 style={{marginBottom: '20px'}}>Перевод клиенту</h2>
+                    {(page === 'transfer' || page === 'withdraw') && (
+                        <div className="view">
+                            <div onClick={() => setPage('home')} style={{marginBottom: '20px', cursor: 'pointer', color: '#94a3b8'}}>← Назад</div>
+                            <h2 style={{marginBottom: '20px'}}>{page === 'transfer' ? 'Перевод человеку' : 'Вывод на карту'}</h2>
                             <div className="form-card">
-                                <form onSubmit={handleTransfer}>
-                                    <div className="input-group">
-                                        <label>Номер телефона или счета</label>
-                                        <input 
-                                            type="text" 
-                                            className="input-field" 
-                                            placeholder="+7 (999) 000-00-00"
-                                            required
-                                            value={transferData.phone}
-                                            onChange={e => setTransferData({...transferData, phone: e.target.value})}
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Сумма перевода</label>
-                                        <input 
-                                            type="number" 
-                                            className="input-field" 
-                                            placeholder="0.00 ₽"
-                                            required
-                                            value={transferData.amount}
-                                            onChange={e => setTransferData({...transferData, amount: e.target.value})}
-                                        />
-                                    </div>
-                                    <button className="main-btn" disabled={loading}>
-                                        {loading ? 'Обработка...' : 'Отправить перевод'}
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Страница Настроек */}
-                    {page === 'settings' && (
-                        <div className="page-content">
-                            <button className="back-link" onClick={() => setPage('home')}>← Назад</button>
-                            <h2 style={{marginBottom: '20px'}}>Настройки профиля</h2>
-                            <div className="form-card">
-                                <div className="input-group">
-                                    <label>Баланс счета (для теста)</label>
+                                <div className="input-box">
+                                    <label>{page === 'transfer' ? 'Номер телефона или счёта' : 'Номер карты'}</label>
+                                    <input 
+                                        type="text" 
+                                        className="input-field" 
+                                        placeholder={page === 'transfer' ? '+7 900 000-00-00' : '0000 0000 0000 0000'}
+                                        value={targetInput}
+                                        onChange={(e) => setTargetInput(e.target.value)}
+                                    />
+                                </div>
+                                <div className="input-box">
+                                    <label>Сумма перевода</label>
                                     <input 
                                         type="number" 
                                         className="input-field" 
-                                        value={balance}
-                                        onChange={e => setBalance(Number(e.target.value))}
+                                        placeholder="0.00 ₽"
+                                        value={amountInput}
+                                        onChange={(e) => setAmountInput(e.target.value)}
                                     />
                                 </div>
-                                <div className="input-group">
-                                    <label>Имя пользователя</label>
-                                    <input type="text" className="input-field" defaultValue="Александр Макаров" />
-                                </div>
-                                <p style={{fontSize: '12px', color: '#64748b'}}>Версия приложения: 4.2.0-stable</p>
+                                <button className="action-button" onClick={() => handleAction(page)}>
+                                    Подтвердить
+                                </button>
                             </div>
                         </div>
                     )}
 
-                    {/* Навигация */}
-                    <nav className="nav-bar">
-                        <button className={`nav-btn ${page === 'home' ? 'active' : ''}`} onClick={() => setPage('home')}>
-                            <i>🏠</i>
-                            <span>Главная</span>
+                    <nav className="bottom-nav">
+                        <button className={`nav-item ${page === 'home' ? 'active' : ''}`} onClick={() => setPage('home')}>
+                            <i>🏠</i><span>Главная</span>
                         </button>
-                        <button className={`nav-btn ${page === 'transfer' ? 'active' : ''}`} onClick={() => setPage('transfer')}>
-                            <i>💸</i>
-                            <span>Платежи</span>
+                        <button className={`nav-item ${page === 'transfer' ? 'active' : ''}`} onClick={() => setPage('transfer')}>
+                            <i>💸</i><span>Платежи</span>
                         </button>
-                        <button className="nav-btn">
-                            <i>📊</i>
-                            <span>Аналитика</span>
-                        </button>
-                        <button className={`nav-btn ${page === 'settings' ? 'active' : ''}`} onClick={() => setPage('settings')}>
-                            <i>⚙️</i>
-                            <span>Сервисы</span>
-                        </button>
+                        <button className="nav-item"><i>📊</i><span>История</span></button>
+                        <button className="nav-item"><i>⚙️</i><span>Профиль</span></button>
                     </nav>
                 </div>
             );
