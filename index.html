@@ -1,482 +1,2181 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina Bank | Modern Fintech</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.5);
-            --bg: #0b0e14;
-            --card-bg: rgba(23, 27, 38, 0.8);
-            --text-main: #ffffff;
-            --text-dim: #94a3b8;
-            --success: #10b981;
-            --danger: #ef4444;
+<meta charset="UTF-8">
+<title>Neobank — Умный мобильный банк</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="theme-color" content="#6366f1">
+<meta name="description" content="Современный мобильный банкинг с инновационными функциями">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --primary-light: #818cf8;
+        --success: #10b981;
+        --success-dark: #059669;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --dark: #0f172a;
+        --dark-card: #1e293b;
+        --gray: #64748b;
+        --gray-light: #94a3b8;
+        --light: #f1f5f9;
+        --light-bg: #f8fafc;
+        --card: #ffffff;
+        --border: rgba(0,0,0,0.06);
+        --shadow: 0 4px 16px rgba(0,0,0,0.06);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --radius: 20px;
+        --radius-sm: 14px;
+    }
+    
+    [data-theme="dark"] {
+        --primary: #818cf8;
+        --primary-dark: #6366f1;
+        --primary-light: #a5b4fc;
+        --success: #34d399;
+        --success-dark: #10b981;
+        --danger: #f87171;
+        --warning: #fbbf24;
+        --info: #60a5fa;
+        --dark: #f1f5f9;
+        --dark-card: #334155;
+        --gray: #94a3b8;
+        --gray-light: #64748b;
+        --light: #1e293b;
+        --light-bg: #0f172a;
+        --card: #1e293b;
+        --border: rgba(255,255,255,0.08);
+        --shadow: 0 4px 16px rgba(0,0,0,0.2);
+        --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--light-bg);
+        color: var(--dark);
+        min-height: 100vh;
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+        transition: background 0.3s, color 0.3s;
+    }
+    
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+        padding-bottom: 100px;
+        position: relative;
+        min-height: 100vh;
+    }
+    
+    /* Pull-to-refresh */
+    .refresh-indicator {
+        position: fixed;
+        top: -50px;
+        left: 0;
+        right: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 500;
+        background: var(--card);
+        transition: transform 0.3s;
+        box-shadow: var(--shadow);
+    }
+    
+    .refresh-indicator.active {
+        transform: translateY(50px);
+    }
+    
+    .refresh-indicator i {
+        margin-right: 10px;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Header */
+    header {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 8px;
+        z-index: 50;
+        transition: var(--transition);
+        border: 1px solid var(--border);
+    }
+    
+    header.scrolled {
+        box-shadow: var(--shadow-lg);
+    }
+    
+    header.hidden {
+        transform: translateY(calc(-100% - 20px));
+        pointer-events: none;
+    }
+    
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .logo {
+        font-size: 22px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--primary);
+        cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+    }
+    
+    .logo:active {
+        transform: scale(0.95);
+    }
+    
+    .logo i { 
+        font-size: 26px; 
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: var(--light);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dark);
+        font-size: 18px;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+    }
+    
+    .icon-btn:active {
+        transform: scale(0.9);
+        background: var(--primary);
+        color: white;
+    }
+    
+    .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        background: var(--danger);
+        color: white;
+        border-radius: 9px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        padding: 0 4px;
+        border: 2px solid var(--card);
+    }
+    
+    .balance-section {
+        text-align: center;
+        padding: 10px 0 5px;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    
+    .balance-label {
+        font-size: 13px;
+        color: var(--gray);
+        margin-bottom: 8px;
+        font-weight: 500;
+        display: block;
+        letter-spacing: 0.3px;
+    }
+    
+    .balance-amount {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1.1;
+        transition: var(--transition);
+        letter-spacing: -1px;
+    }
+    
+    .balance-hidden {
+        filter: blur(12px);
+    }
+    
+    /* Секция-карточка */
+    .section-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        transition: var(--transition);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+    
+    .section-action {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--primary);
+        background: rgba(99, 102, 241, 0.08);
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    [data-theme="dark"] .section-action {
+        background: rgba(129, 140, 248, 0.15);
+    }
+    
+    .section-action:active {
+        transform: scale(0.95);
+        background: rgba(99, 102, 241, 0.15);
+    }
+    
+    /* Банковская карта */
+    .bank-card-container {
+        perspective: 1000px;
+        height: 210px;
+        cursor: pointer;
+        margin-bottom: 16px;
+    }
+    
+    .bank-card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    
+    .bank-card.flipped {
+        transform: rotateY(180deg);
+    }
+    
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        border-radius: var(--radius);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+    
+    .card-front {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, #4338ca 100%);
+        color: white;
+        box-shadow: 0 16px 40px rgba(99, 102, 241, 0.35);
+    }
+    
+    .card-front::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .card-front::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .card-back {
+        transform: rotateY(180deg);
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-chip {
+        width: 45px;
+        height: 34px;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-chip::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        right: 0;
+        bottom: 0;
+        width: 200%;
+        background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+        animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    .card-number {
+        font-size: 22px;
+        letter-spacing: 3px;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card-info small {
+        display: block;
+        font-size: 10px;
+        opacity: 0.7;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .card-holder {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+    
+    .magnetic-stripe {
+        height: 45px;
+        background: #000;
+        width: calc(100% + 48px);
+        margin: 15px -24px;
+        border-radius: 0;
+    }
+    
+    .cvv-section {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .cvv-label {
+        font-size: 12px;
+        opacity: 0.7;
+    }
+    
+    .cvv {
+        background: white;
+        color: #000;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+    
+    .card-back-info {
+        font-size: 11px;
+        opacity: 0.5;
+        text-align: center;
+        line-height: 1.4;
+    }
+    
+    /* Быстрые действия */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    
+    .action-btn {
+        background: var(--light);
+        border: 1px solid var(--border);
+        padding: 16px 8px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: var(--dark);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .action-btn i { 
+        font-size: 22px; 
+        color: var(--primary);
+        transition: var(--transition);
+    }
+    
+    .action-btn:active {
+        transform: scale(0.93);
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .action-btn:active i {
+        color: white;
+    }
+    
+    /* Транзакции */
+    .transactions-list {
+        position: relative;
+    }
+    
+    .transaction-item {
+        background: var(--light);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        user-select: none;
+        border: 1px solid var(--border);
+    }
+    
+    .transaction-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .transaction-item:active {
+        transform: scale(0.98);
+    }
+    
+    .transaction-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .transaction-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: white;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+    
+    .transaction-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .transaction-title {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--dark);
+    }
+    
+    .transaction-date {
+        font-size: 12px;
+        color: var(--gray);
+    }
+    
+    .transaction-amount {
+        font-weight: 700;
+        font-size: 16px;
+        text-align: right;
+        flex-shrink: 0;
+        margin-left: 12px;
+        white-space: nowrap;
+    }
+    
+    .transaction-amount.income {
+        color: var(--success);
+    }
+    
+    .transaction-amount.expense {
+        color: var(--dark);
+    }
+    
+    /* Курсы валют */
+    .currency-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .currency-card {
+        background: var(--light);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        border: 1px solid var(--border);
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    .currency-card:active {
+        transform: scale(0.97);
+    }
+    
+    .currency-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .currency-flag {
+        font-size: 28px;
+        line-height: 1;
+    }
+    
+    .currency-code {
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--dark);
+    }
+    
+    .currency-name {
+        font-size: 12px;
+        color: var(--gray);
+    }
+    
+    .currency-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+    
+    .currency-rate {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1;
+    }
+    
+    .currency-unit {
+        font-size: 13px;
+        color: var(--gray);
+        font-weight: 500;
+    }
+    
+    .currency-change {
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 8px;
+    }
+    
+    .change-up { 
+        color: var(--success); 
+        background: rgba(16, 185, 129, 0.1);
+    }
+    .change-down { 
+        color: var(--danger); 
+        background: rgba(239, 68, 68, 0.1);
+    }
+    
+    /* Категории расходов */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    
+    .category-item {
+        background: var(--light);
+        border-radius: var(--radius-sm);
+        padding: 18px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+        border: 1px solid var(--border);
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    .category-item:active {
+        transform: scale(0.95);
+    }
+    
+    .category-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+    }
+    
+    .category-name {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--dark);
+        line-height: 1.3;
+    }
+    
+    .category-amount {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--primary);
+    }
+    
+    /* Статистика */
+    .stats-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+    
+    .stats-total {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1.2;
+    }
+    
+    .stats-label {
+        font-size: 13px;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+    
+    .stats-change {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--success);
+        text-align: right;
+    }
+    
+    .stats-change-label {
+        font-size: 12px;
+        color: var(--gray);
+        text-align: right;
+        margin-top: 4px;
+    }
+    
+    .progress-bar {
+        background: var(--light);
+        height: 12px;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 6px;
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .progress-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--gray);
+    }
+    
+    /* Нижнее меню */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--gray);
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 12px;
+        transition: var(--transition);
+        font-size: 11px;
+        font-weight: 600;
+        min-width: 60px;
+        position: relative;
+        gap: 4px;
+    }
+    
+    .nav-item i {
+        font-size: 20px;
+        transition: var(--transition);
+    }
+    
+    .nav-item.active {
+        color: var(--primary);
+    }
+    
+    .nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 0 0 3px 3px;
+    }
+    
+    .nav-item:active {
+        transform: scale(0.9);
+    }
+    
+    .nav-pulse {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        width: 7px;
+        height: 7px;
+        background: var(--danger);
+        border-radius: 50%;
+        border: 1.5px solid var(--card);
+    }
+    
+    /* Модальные окна */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 1000;
+        padding: 0;
+    }
+    
+    .modal-overlay.active { 
+        display: flex; 
+    }
+    
+    .modal-content {
+        background: var(--card);
+        border-radius: 24px 24px 0 0;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--dark);
+    }
+    
+    @keyframes modalSlideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+    
+    .modal-handle {
+        width: 40px;
+        height: 4px;
+        background: var(--gray-light);
+        border-radius: 2px;
+        margin: 12px auto 0;
+    }
+    
+    .modal-header {
+        padding: 20px 24px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+    }
+    
+    .modal-close {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--light);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dark);
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .modal-close:active {
+        transform: scale(0.9);
+    }
+    
+    .modal-body {
+        padding: 12px 24px 34px;
+    }
+    
+    .input-group {
+        margin-bottom: 18px;
+    }
+    
+    .input-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 14px;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 16px 18px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        background: var(--light);
+        color: var(--dark);
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+        transition: var(--transition);
+        appearance: none;
+        -webkit-appearance: none;
+    }
+    
+    select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: var(--card);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-with-icon input {
+        padding-right: 50px;
+    }
+    
+    .input-icon {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+        font-size: 18px;
+        pointer-events: none;
+    }
+    
+    .btn {
+        padding: 16px 24px;
+        border-radius: 14px;
+        border: none;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-primary:active {
+        transform: translateY(2px);
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+    }
+    
+    /* Уведомление-тост */
+    .notification-toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-120px);
+        background: var(--card);
+        color: var(--dark);
+        padding: 16px 20px;
+        border-radius: 16px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+        z-index: 1100;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        max-width: calc(100% - 40px);
+        width: auto;
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 1px solid var(--border);
+    }
+    
+    .notification-toast.show {
+        transform: translateX(-50%) translateY(0);
+    }
+    
+    .toast-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .toast-content {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .toast-title {
+        font-weight: 700;
+        font-size: 15px;
+    }
+    
+    .toast-message {
+        font-size: 13px;
+        color: var(--gray);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Контекстное меню */
+    .context-menu {
+        position: fixed;
+        background: var(--card);
+        border-radius: 16px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+        z-index: 1050;
+        padding: 8px;
+        min-width: 220px;
+        display: none;
+        border: 1px solid var(--border);
+    }
+    
+    .context-menu.active {
+        display: block;
+        animation: contextIn 0.2s ease;
+    }
+    
+    @keyframes contextIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .context-item {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: var(--transition);
+        color: var(--dark);
+        font-weight: 500;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .context-item:active {
+        background: var(--light);
+    }
+    
+    .context-item i {
+        width: 20px;
+        text-align: center;
+        color: var(--primary);
+        font-size: 16px;
+    }
+    
+    /* Голосовой индикатор */
+    .voice-indicator {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 160px;
+        height: 160px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100;
+        color: white;
+        font-size: 40px;
+        box-shadow: 0 20px 60px rgba(99, 102, 241, 0.5);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 10px;
+    }
+    
+    .voice-indicator span {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    
+    .voice-indicator.active {
+        transform: translate(-50%, -50%) scale(1);
+        animation: pulseVoice 1.5s infinite;
+    }
+    
+    @keyframes pulseVoice {
+        0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+        70% { box-shadow: 0 0 0 30px rgba(99, 102, 241, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    
+    /* PWA Install */
+    .install-banner {
+        display: none;
+        position: fixed;
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+        max-width: 568px;
+        margin: 0 auto;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+        z-index: 90;
+        animation: modalSlideUp 0.4s ease;
+    }
+    
+    .install-banner.active {
+        display: block;
+    }
+    
+    .install-text {
+        font-size: 14px;
+        color: var(--gray);
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+    
+    .install-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .install-actions .btn {
+        flex: 1;
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .btn-ghost {
+        background: var(--light);
+        color: var(--dark);
+        border: 1px solid var(--border);
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 380px) {
+        .container { padding: 12px; padding-bottom: 90px; }
+        .quick-actions { gap: 8px; }
+        .action-btn { padding: 14px 6px; font-size: 11px; }
+        .action-btn i { font-size: 20px; }
+        .currency-grid { grid-template-columns: 1fr; }
+        .categories-grid { grid-template-columns: repeat(2, 1fr); }
+        .balance-amount { font-size: 30px; }
+        .bank-card-container { height: 190px; }
+        .card-number { font-size: 18px; }
+    }
+    
+    @media (min-width: 768px) {
+        .container { max-width: 700px; padding: 24px; padding-bottom: 30px; }
+        .bottom-nav { display: none; }
+    }
+    
+    /* iOS safe area */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        .container {
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 35%),
-                radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.15) 0%, transparent 35%);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-        }
-
-        #root {
-            width: 100%;
-            max-width: 430px;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            border-left: 1px solid rgba(255,255,255,0.05);
-            background: rgba(11, 14, 20, 0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        /* --- Animations --- */
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .fade-in { animation: slideIn 0.4s ease forwards; }
-
-        /* --- Components --- */
-        .app-wrapper {
-            padding: 24px;
-            padding-bottom: 100px;
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            box-shadow: 0 4px 12px var(--primary-glow);
-        }
-
-        .main-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 24px;
-            border-radius: 28px;
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .main-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
-        }
-
-        .balance-label {
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .balance-value {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-
-        .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 0.2s;
-        }
-
-        .action-item:hover .action-icon {
-            background: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--primary-glow);
-        }
-
-        .action-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .transaction-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .transaction-item {
-            background: var(--card-bg);
-            padding: 16px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .tx-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .tx-info { flex: 1; }
-        .tx-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
-        .tx-date { font-size: 12px; color: var(--text-dim); }
-        .tx-amount { font-weight: 700; font-size: 15px; }
-
-        .income { color: var(--success); }
-        .expense { color: var(--text-main); }
-
-        /* --- Bottom Nav --- */
         .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 85px;
-            background: rgba(11, 14, 20, 0.8);
-            backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: 20px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
         }
-
-        .nav-btn {
-            color: var(--text-dim);
-            font-size: 24px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-btn.active { color: var(--primary); }
-
-        .nav-dot {
-            width: 4px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 50%;
-            opacity: 0;
-        }
-
-        .active .nav-dot { opacity: 1; }
-
-        /* --- Withdraw Form --- */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-dim);
-            font-size: 13px;
-        }
-
-        .modern-input {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 16px;
-            border-radius: 16px;
-            color: white;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .modern-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 18px;
-            border-radius: 18px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 10px 25px var(--primary-glow);
-            transition: 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .success-overlay {
-            position: absolute;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .success-check {
-            width: 80px;
-            height: 80px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin-bottom: 24px;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-        }
-    </style>
+    }
+    
+    /* Скролл-бар */
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    
+    /* Убираем outline на мобильных */
+    @media (hover: none) {
+        *:focus { outline: none; }
+    }
+</style>
 </head>
-<body>
-    <div id="root"></div>
+<body data-theme="light">
+    <!-- Pull-to-refresh -->
+    <div class="refresh-indicator" id="refreshIndicator">
+        <i class="fas fa-sync-alt"></i>
+        <span>Обновление...</span>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <!-- Голосовой индикатор -->
+    <div class="voice-indicator" id="voiceIndicator">
+        <i class="fas fa-microphone"></i>
+        <span>Говорите...</span>
+    </div>
 
-        const TransactionItem = ({ icon, name, date, amount, type }) => (
-            <div className="transaction-item fade-in">
-                <div className="tx-icon" style={{background: type === 'income' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)'}}>
-                    {icon}
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <header id="mainHeader">
+            <div class="header-top">
+                <div class="logo" id="logo">
+                    <i class="fas fa-university"></i>
+                    <span>Neobank</span>
                 </div>
-                <div className="tx-info">
-                    <div className="tx-name">{name}</div>
-                    <div className="tx-date">{date}</div>
-                </div>
-                <div className={`tx-amount ${type}`}>
-                    {type === 'income' ? '+' : '-'}{amount} ₽
+                <div class="header-actions">
+                    <button class="icon-btn" id="searchBtn" aria-label="Поиск">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" id="notificationBtn" aria-label="Уведомления">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    <button class="icon-btn" id="themeToggle" aria-label="Переключить тему">
+                        <i class="fas fa-moon"></i>
+                    </button>
                 </div>
             </div>
-        );
-
-        const App = () => {
-            const [view, setView] = useState('home');
-            const [balance, setBalance] = useState(452500);
-            const [loading, setLoading] = useState(false);
-            const [success, setSuccess] = useState(false);
-
-            const handleWithdraw = (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setTimeout(() => {
-                    setLoading(false);
-                    setSuccess(true);
-                }, 1500);
-            };
-
-            const closeSuccess = () => {
-                setSuccess(false);
-                setView('home');
-            };
-
-            return (
-                <div style={{height: '100%'}}>
-                    {success && (
-                        <div className="success-overlay fade-in">
-                            <div className="success-check">✓</div>
-                            <h2 style={{marginBottom: '12px'}}>Перевод выполнен!</h2>
-                            <p style={{color: '#94a3b8', marginBottom: '32px'}}>Деньги будут зачислены на указанный счет в течение 15 минут.</p>
-                            <button className="btn-primary" onClick={closeSuccess}>Вернуться на главную</button>
-                        </div>
-                    )}
-
-                    <div className="app-wrapper">
-                        {view === 'home' && (
-                            <div className="fade-in">
-                                <header className="header">
-                                    <div className="profile-section">
-                                        <div className="avatar">JD</div>
-                                        <div>
-                                            <div style={{fontSize: '12px', color: '#94a3b8'}}>Добрый вечер,</div>
-                                            <div style={{fontWeight: 700}}>Джон Доу</div>
-                                        </div>
-                                    </div>
-                                    <div className="action-icon" style={{width: 40, height: 40}}>🔔</div>
-                                </header>
-
-                                <div className="main-card">
-                                    <div className="balance-label">Ваш баланс</div>
-                                    <div className="balance-value">{balance.toLocaleString()} ₽</div>
-                                    <div style={{marginTop: '20px', display: 'flex', gap: '10px'}}>
-                                        <span style={{fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px'}}>+$2,400.00</span>
-                                        <span style={{fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px'}}>VISA •• 4421</span>
-                                    </div>
-                                </div>
-
-                                <div className="action-grid">
-                                    <div className="action-item" onClick={() => setView('withdraw')}>
-                                        <div className="action-icon">💸</div>
-                                        <span className="action-label">Вывод</span>
-                                    </div>
-                                    <div className="action-item">
-                                        <div className="action-icon">📈</div>
-                                        <span className="action-label">Инвест</span>
-                                    </div>
-                                    <div className="action-item">
-                                        <div className="action-icon">📱</div>
-                                        <span className="action-label">Связь</span>
-                                    </div>
-                                    <div className="action-item">
-                                        <div className="action-icon">•••</div>
-                                        <span className="action-label">Еще</span>
-                                    </div>
-                                </div>
-
-                                <div className="section-header">
-                                    <h3 style={{fontSize: '18px'}}>Последние операции</h3>
-                                    <span style={{color: var(--primary), fontSize: '13px', fontWeight: 600}}>Все</span>
-                                </div>
-
-                                <div className="transaction-list">
-                                    <TransactionItem icon="☕" name="Starbucks Coffee" date="Сегодня, 10:24" amount="450" type="expense" />
-                                    <TransactionItem icon="💰" name="Зарплата" date="Вчера, 18:00" amount="125000" type="income" />
-                                    <TransactionItem icon="🚗" name="Uber Taxi" date="24 Окт, 21:15" amount="890" type="expense" />
-                                    <TransactionItem icon="🍎" name="ВкусВилл" date="23 Окт, 14:20" amount="2400" type="expense" />
-                                </div>
-                            </div>
-                        )}
-
-                        {view === 'withdraw' && (
-                            <div className="fade-in">
-                                <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px'}}>
-                                    <div className="action-icon" style={{width: 40, height: 40}} onClick={() => setView('home')}>←</div>
-                                    <h2 style={{fontSize: '20px'}}>Вывод средств</h2>
-                                </div>
-
-                                <form onSubmit={handleWithdraw}>
-                                    <div className="input-group">
-                                        <label className="input-label">Номер карты или телефона</label>
-                                        <input type="text" className="modern-input" placeholder="0000 0000 0000 0000" required />
-                                    </div>
-                                    <div className="input-group">
-                                        <label className="input-label">Сумма (₽)</label>
-                                        <input type="number" className="modern-input" placeholder="Введите сумму" required />
-                                    </div>
-                                    <div style={{background: 'rgba(99, 102, 241, 0.1)', padding: '16px', borderRadius: '16px', marginBottom: '30px'}}>
-                                        <div style={{fontSize: '12px', color: '#94a3b8', marginBottom: '4px'}}>Комиссия 0%</div>
-                                        <div style={{fontSize: '14px', fontWeight: 600}}>Лимит до 1 000 000 ₽ в сутки</div>
-                                    </div>
-                                    <button type="submit" className="btn-primary" disabled={loading}>
-                                        {loading ? 'Обработка...' : 'Подтвердить вывод'}
-                                    </button>
-                                </form>
-                            </div>
-                        )}
-                    </div>
-
-                    <nav className="bottom-nav">
-                        <div className={`nav-btn ${view === 'home' ? 'active' : ''}`} onClick={() => setView('home')}>
-                            <span>🏠</span>
-                            <div className="nav-dot"></div>
-                        </div>
-                        <div className="nav-btn">
-                            <span>📊</span>
-                            <div className="nav-dot"></div>
-                        </div>
-                        <div className={`nav-btn ${view === 'withdraw' ? 'active' : ''}`} onClick={() => setView('withdraw')}>
-                            <span>💳</span>
-                            <div className="nav-dot"></div>
-                        </div>
-                        <div className="nav-btn">
-                            <span>⚙️</span>
-                            <div className="nav-dot"></div>
-                        </div>
-                    </nav>
+            
+            <div class="balance-section" id="balanceSection">
+                <span class="balance-label">Доступный баланс</span>
+                <div class="balance-amount" id="balanceAmount">
+                    ₽<span id="balanceWhole">248 732</span>.<span id="balanceDecimal">48</span>
                 </div>
-            );
-        };
+            </div>
+        </header>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        <!-- Банковская карта -->
+        <div class="bank-card-container">
+            <div class="bank-card" id="bankCard">
+                <div class="card-front">
+                    <div class="card-chip"></div>
+                    <div class="card-number">•••• •••• •••• 8921</div>
+                    <div class="card-info">
+                        <div>
+                            <small>Держатель карты</small>
+                            <div class="card-holder">МАИР САДЫКОВ</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <small>Действует до</small>
+                            <div style="font-weight: 600;">12/35</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-back">
+                    <div class="magnetic-stripe"></div>
+                    <div class="cvv-section">
+                        <span class="cvv-label">CVV</span>
+                        <div class="cvv">332</div>
+                    </div>
+                    <div class="card-back-info">
+                        Для обслуживания обращайтесь<br>в поддержку Neobank
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрые действия -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Действия</h3>
+            </div>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="openTransferModal()">
+                    <i class="fas fa-exchange-alt"></i>
+                    Перевод
+                </button>
+                <button class="action-btn" onclick="openPaymentModal()">
+                    <i class="fas fa-mobile-alt"></i>
+                    Платежи
+                </button>
+                <button class="action-btn" onclick="showQRScanner()">
+                    <i class="fas fa-qrcode"></i>
+                    QR
+                </button>
+                <button class="action-btn" onclick="startVoiceCommand()">
+                    <i class="fas fa-microphone"></i>
+                    Голос
+                </button>
+                <button class="action-btn" onclick="openDepositModal()">
+                    <i class="fas fa-piggy-bank"></i>
+                    Вклад
+                </button>
+                <button class="action-btn" onclick="showAtms()">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Банкоматы
+                </button>
+                <button class="action-btn" onclick="showCategories()">
+                    <i class="fas fa-chart-pie"></i>
+                    Аналитика
+                </button>
+                <button class="action-btn" onclick="toggleTheme()">
+                    <i class="fas fa-palette"></i>
+                    Тема
+                </button>
+            </div>
+        </div>
+
+        <!-- Последние транзакции -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Операции</h3>
+                <button class="section-action" onclick="showAllTransactions()">Все</button>
+            </div>
+            <div class="transactions-list" id="transactionsList"></div>
+        </div>
+
+        <!-- Курсы валют -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Курсы валют</h3>
+            </div>
+            <div class="currency-grid" id="currencyGrid"></div>
+        </div>
+
+        <!-- Категории расходов -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Расходы</h3>
+            </div>
+            <div class="categories-grid" id="categoriesGrid"></div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Статистика</h3>
+            </div>
+            <div class="stats-hero">
+                <div>
+                    <div class="stats-total">₽248 732</div>
+                    <div class="stats-label">Всего расходов</div>
+                </div>
+                <div>
+                    <div class="stats-change">↓ 12%</div>
+                    <div class="stats-change-label">к прошлому месяцу</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-labels">
+                <span>1 марта</span>
+                <span>Сегодня</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижнее меню -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-nav="home">
+            <i class="fas fa-home"></i>
+            Главная
+        </a>
+        <a href="#" class="nav-item" data-nav="cards">
+            <i class="fas fa-credit-card"></i>
+            Карты
+        </a>
+        <a href="#" class="nav-item" data-nav="transfer">
+            <i class="fas fa-exchange-alt"></i>
+            Перевод
+        </a>
+        <a href="#" class="nav-item" data-nav="stats">
+            <i class="fas fa-chart-bar"></i>
+            Аналитика
+        </a>
+        <a href="#" class="nav-item" data-nav="profile">
+            <i class="fas fa-user"></i>
+            Профиль
+        </a>
+    </nav>
+
+    <!-- Контекстное меню -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" onclick="repeatTransaction()">
+            <i class="fas fa-redo"></i> Повторить
+        </div>
+        <div class="context-item" onclick="addToFavorites()">
+            <i class="fas fa-star"></i> В избранное
+        </div>
+        <div class="context-item" onclick="showDetails()">
+            <i class="fas fa-info-circle"></i> Подробности
+        </div>
+        <div class="context-item" onclick="reportTransaction()">
+            <i class="fas fa-flag"></i> Пожаловаться
+        </div>
+    </div>
+
+    <!-- Модальное окно перевода -->
+    <div class="modal-overlay" id="transferModal">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <h2>Новый перевод</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="input-label">Кому перевести</label>
+                    <div class="input-with-icon">
+                        <input type="text" placeholder="Номер карты или телефон" id="transferTo">
+                        <div class="input-icon"><i class="fas fa-user-friends"></i></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Сумма перевода</label>
+                    <div class="input-with-icon">
+                        <input type="number" placeholder="0" id="transferAmount" inputmode="decimal">
+                        <div class="input-icon"><i class="fas fa-ruble-sign"></i></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Сообщение (необязательно)</label>
+                    <textarea placeholder="Например: За обед" rows="3" id="transferMessage"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="makeTransfer()" style="margin-top: 8px;">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно оплаты -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <h2>Оплата услуг</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="input-label">Тип услуги</label>
+                    <select id="serviceType">
+                        <option value="mobile">Мобильная связь</option>
+                        <option value="internet">Интернет</option>
+                        <option value="utilities">ЖКУ</option>
+                        <option value="tv">Телевидение</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Номер счета / телефона</label>
+                    <input type="text" placeholder="Введите номер" id="accountNumber">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Сумма платежа</label>
+                    <div class="input-with-icon">
+                        <input type="number" placeholder="0" id="paymentAmount" inputmode="decimal">
+                        <div class="input-icon"><i class="fas fa-ruble-sign"></i></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="makePayment()" style="margin-top: 8px;">
+                    <i class="fas fa-bolt"></i>
+                    Оплатить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Тост-уведомление -->
+    <div class="notification-toast" id="notificationToast">
+        <div class="toast-icon" id="toastIcon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">Успешно!</div>
+            <div class="toast-message" id="toastMessage">Операция выполнена</div>
+        </div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div class="install-banner" id="installBanner">
+        <div class="install-text">
+            <strong>Установите Neobank</strong> на устройство для быстрого доступа и работы оффлайн.
+        </div>
+        <div class="install-actions">
+            <button class="btn btn-ghost" onclick="hideInstallPrompt()">Позже</button>
+            <button class="btn btn-primary" onclick="installPWA()">
+                <i class="fas fa-download"></i> Установить
+            </button>
+        </div>
+    </div>
+
+<script>
+// ===================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====================
+let deferredPrompt = null;
+let currentTheme = localStorage.getItem('theme') || 'light';
+let balanceHidden = localStorage.getItem('balanceHidden') === 'true';
+let lastScrollTop = 0;
+let refreshStartY = 0;
+let isRefreshing = false;
+let voiceRecognition = null;
+let toastTimeout = null;
+
+// ===================== ДАННЫЕ =====================
+const transactions = [
+    { id: 3, title: "Steam Store", date: "Вчера, 23:11", amount: -6990, icon: "fa-gamepad", color: "#f59e0b" },
+    { id: 4, title: "Перевод от Ислам. К", date: "12 марта, 14:20", amount: 50000, icon: "fa-user-plus", color: "#10b981" },
+];
+
+const currencies = [
+    { code: "USD", name: "Доллар", rate: 96.42, change: 0.31, symbol: "🇺🇸" },
+    { code: "EUR", name: "Евро", rate: 103.87, change: -0.12, symbol: "🇪🇺" },
+    { code: "CNY", name: "Юань", rate: 13.41, change: 0.08, symbol: "🇨🇳" },
+    { code: "GBP", name: "Фунт", rate: 122.15, change: 0.45, symbol: "🇬🇧" }
+];
+
+const categories = [
+    { name: "Продукты", amount: 15420, icon: "fa-shopping-basket", color: "#10b981" },
+    { name: "Кафе", amount: 8320, icon: "fa-coffee", color: "#f59e0b" },
+    { name: "Транспорт", amount: 4560, icon: "fa-bus", color: "#3b82f6" },
+    { name: "Развлечения", amount: 12500, icon: "fa-film", color: "#8b5cf6" },
+    { name: "Шопинг", amount: 28400, icon: "fa-shopping-bag", color: "#ef4444" },
+    { name: "Здоровье", amount: 7600, icon: "fa-heart", color: "#ec4899" }
+];
+
+// ===================== ИНИЦИАЛИЗАЦИЯ =====================
+document.addEventListener('DOMContentLoaded', function() {
+    setTheme(currentTheme);
+    initBalance();
+    loadTransactions();
+    loadCurrencies();
+    loadCategories();
+    setupGestures();
+    setupScrollAnimations();
+    setupVoiceRecognition();
+    setupNavigation();
+    animateCounters();
+    initPWA();
+    
+    // Анимация прогресс-бара
+    setTimeout(() => {
+        document.getElementById('progressFill').style.width = '65%';
+    }, 500);
+    
+    // Приветствие
+    setTimeout(() => {
+        showNotification('Добро пожаловать в Neobank!', 'fas fa-university');
+    }, 800);
+});
+
+// ===================== ТЕМА =====================
+function setTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    currentTheme = theme;
+    
+    const icon = document.getElementById('themeToggle').querySelector('i');
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    
+    document.querySelector('meta[name="theme-color"]').setAttribute(
+        'content', theme === 'dark' ? '#0f172a' : '#6366f1'
+    );
+}
+
+function toggleTheme() {
+    setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    showNotification('Тема изменена', 'fas fa-palette');
+}
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+// ===================== БАЛАНС =====================
+function initBalance() {
+    const balanceAmount = document.getElementById('balanceAmount');
+    if (balanceHidden) balanceAmount.classList.add('balance-hidden');
+    
+    let tapCount = 0;
+    let tapTimer;
+    
+    document.getElementById('balanceSection').addEventListener('click', function() {
+        tapCount++;
+        clearTimeout(tapTimer);
+        
+        if (tapCount === 2) {
+            balanceHidden = !balanceHidden;
+            balanceAmount.classList.toggle('balance-hidden');
+            localStorage.setItem('balanceHidden', balanceHidden);
+            showNotification(
+                balanceHidden ? 'Баланс скрыт' : 'Баланс показан',
+                balanceHidden ? 'fas fa-eye-slash' : 'fas fa-eye'
+            );
+            tapCount = 0;
+        } else {
+            tapTimer = setTimeout(() => { tapCount = 0; }, 400);
+        }
+    });
+}
+
+// ===================== АНИМАЦИЯ СЧЁТЧИКОВ =====================
+function animateCounters() {
+    const animateValue = (el, end, duration) => {
+        let start = 0;
+        let startTime = null;
+        
+        const step = (time) => {
+            if (!startTime) startTime = time;
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+            const value = Math.floor(eased * end);
+            el.textContent = value.toLocaleString('ru-RU');
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        
+        requestAnimationFrame(step);
+    };
+    
+    animateValue(document.getElementById('balanceWhole'), 1248732, 1800);
+    animateValue(document.getElementById('balanceDecimal'), 48, 1800);
+}
+
+// ===================== ТРАНЗАКЦИИ =====================
+function loadTransactions() {
+    const container = document.getElementById('transactionsList');
+    container.innerHTML = '';
+    
+    transactions.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'transaction-item';
+        el.dataset.id = t.id;
+        
+        const isIncome = t.amount > 0;
+        const sign = isIncome ? '+' : '−';
+        const amountClass = isIncome ? 'income' : 'expense';
+        
+        el.innerHTML = `
+            <div class="transaction-content">
+                <div class="transaction-icon" style="background: ${t.color};">
+                    <i class="fas ${t.icon}"></i>
+                </div>
+                <div class="transaction-info">
+                    <div class="transaction-title">${t.title}</div>
+                    <div class="transaction-date">${t.date}</div>
+                </div>
+            </div>
+            <div class="transaction-amount ${amountClass}">
+                ${sign}${Math.abs(t.amount).toLocaleString('ru-RU')} ₽
+            </div>
+        `;
+        
+        // Долгое нажатие — контекстное меню
+        let pressTimer;
+        
+        el.addEventListener('touchstart', (e) => {
+            pressTimer = setTimeout(() => {
+                showContextMenu(e, t);
+            }, 500);
+        }, { passive: true });
+        
+        el.addEventListener('touchend', () => clearTimeout(pressTimer));
+        el.addEventListener('touchmove', () => clearTimeout(pressTimer));
+        
+        el.addEventListener('click', () => {
+            showNotification(`${t.title}: ${sign}${Math.abs(t.amount).toLocaleString('ru-RU')} ₽`, `fas ${t.icon}`);
+        });
+        
+        container.appendChild(el);
+    });
+}
+
+// ===================== КОНТЕКСТНОЕ МЕНЮ =====================
+function showContextMenu(e, transaction) {
+    const menu = document.getElementById('contextMenu');
+    
+    let x, y;
+    if (e.touches) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    
+    // Убедимся, что меню не выходит за экран
+    const menuWidth = 220;
+    const menuHeight = 200;
+    
+    if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth - 16;
+    if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight - 16;
+    if (x < 16) x = 16;
+    if (y < 16) y = 16;
+    
+    menu.style.top = y + 'px';
+    menu.style.left = x + 'px';
+    menu.classList.add('active');
+    
+    const closeMenu = (ev) => {
+        if (!menu.contains(ev.target)) {
+            menu.classList.remove('active');
+            document.removeEventListener('click', closeMenu);
+            document.removeEventListener('touchstart', closeMenu);
+        }
+    };
+    
+    setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+        document.addEventListener('touchstart', closeMenu);
+    }, 50);
+}
+
+function repeatTransaction() { showNotification('Операция повторена', 'fas fa-redo'); closeContextMenu(); }
+function addToFavorites() { showNotification('Добавлено в избранное', 'fas fa-star'); closeContextMenu(); }
+function reportTransaction() { showNotification('Жалоба отправлена', 'fas fa-flag'); closeContextMenu(); }
+function showDetails() { showNotification('Подробности операции', 'fas fa-info-circle'); closeContextMenu(); }
+function closeContextMenu() { document.getElementById('contextMenu').classList.remove('active'); }
+
+// ===================== ВАЛЮТЫ =====================
+function loadCurrencies() {
+    const container = document.getElementById('currencyGrid');
+    container.innerHTML = '';
+    
+    currencies.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'currency-card';
+        
+        const changeClass = c.change >= 0 ? 'change-up' : 'change-down';
+        const changeIcon = c.change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+        
+        el.innerHTML = `
+            <div class="currency-top">
+                <div class="currency-flag">${c.symbol}</div>
+                <div>
+                    <div class="currency-code">${c.code}</div>
+                    <div class="currency-name">${c.name}</div>
+                </div>
+            </div>
+            <div class="currency-bottom">
+                <div>
+                    <div class="currency-rate">${c.rate.toFixed(2)}</div>
+                    <div class="currency-unit">₽</div>
+                </div>
+                <div class="currency-change ${changeClass}">
+                    <i class="fas ${changeIcon}" style="font-size: 10px;"></i>
+                    ${Math.abs(c.change)}%
+                </div>
+            </div>
+        `;
+        
+        el.addEventListener('click', () => {
+            showNotification(`${c.code}: ${c.rate.toFixed(2)} ₽`, 'fas fa-chart-line');
+        });
+        
+        container.appendChild(el);
+    });
+}
+
+// ===================== КАТЕГОРИИ =====================
+function loadCategories() {
+    const container = document.getElementById('categoriesGrid');
+    container.innerHTML = '';
+    
+    categories.forEach(cat => {
+        const el = document.createElement('div');
+        el.className = 'category-item';
+        
+        el.innerHTML = `
+            <div class="category-icon" style="background: ${cat.color};">
+                <i class="fas ${cat.icon}"></i>
+            </div>
+            <div class="category-name">${cat.name}</div>
+            <div class="category-amount">${cat.amount.toLocaleString('ru-RU')} ₽</div>
+        `;
+        
+        el.addEventListener('click', () => {
+            showNotification(`${cat.name}: ${cat.amount.toLocaleString('ru-RU')} ₽`, `fas ${cat.icon}`);
+        });
+        
+        container.appendChild(el);
+    });
+}
+
+// ===================== МОДАЛЬНЫЕ ОКНА =====================
+function openTransferModal() { document.getElementById('transferModal').classList.add('active'); }
+function openPaymentModal() { document.getElementById('paymentModal').classList.add('active'); }
+
+function closeModal() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+}
+
+// Закрытие по клику на overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+});
+
+function makeTransfer() {
+    const amount = document.getElementById('transferAmount').value;
+    const to = document.getElementById('transferTo').value;
+    
+    if (!amount || !to) {
+        showNotification('Заполните все обязательные поля', 'fas fa-exclamation-triangle');
+        return;
+    }
+    
+    showNotification(`Перевод ${parseInt(amount).toLocaleString('ru-RU')} ₽ отправлен`, 'fas fa-check-circle');
+    closeModal();
+    document.getElementById('transferAmount').value = '';
+    document.getElementById('transferTo').value = '';
+    document.getElementById('transferMessage').value = '';
+}
+
+function makePayment() {
+    const amount = document.getElementById('paymentAmount').value;
+    
+    if (!amount) {
+        showNotification('Введите сумму платежа', 'fas fa-exclamation-triangle');
+        return;
+    }
+    
+    showNotification(`Оплата ${parseInt(amount).toLocaleString('ru-RU')} ₽ выполнена`, 'fas fa-bolt');
+    closeModal();
+    document.getElementById('paymentAmount').value = '';
+}
+
+// ===================== УВЕДОМЛЕНИЯ =====================
+function showNotification(message, icon = 'fas fa-info-circle', duration = 3000) {
+    const toast = document.getElementById('notificationToast');
+    const msgEl = document.getElementById('toastMessage');
+    const iconEl = document.getElementById('toastIcon').querySelector('i');
+    
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        toast.classList.remove('show');
+    }
+    
+    msgEl.textContent = message;
+    iconEl.className = icon;
+    
+    // Небольшая задержка для ре-анимации
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+    
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+        toastTimeout = null;
+    }, duration);
+}
+
+// ===================== ЖЕСТЫ =====================
+function setupGestures() {
+    const container = document.getElementById('mainContainer');
+    const refreshIndicator = document.getElementById('refreshIndicator');
+    
+    container.addEventListener('touchstart', (e) => {
+        if (window.scrollY <= 0) refreshStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    container.addEventListener('touchmove', (e) => {
+        if (!isRefreshing && window.scrollY <= 0 && refreshStartY > 0) {
+            const diff = e.touches[0].clientY - refreshStartY;
+            if (diff > 70) {
+                isRefreshing = true;
+                refreshIndicator.classList.add('active');
+            }
+        }
+    }, { passive: true });
+    
+    container.addEventListener('touchend', () => {
+        if (isRefreshing) {
+            setTimeout(refreshData, 1200);
+        }
+        refreshStartY = 0;
+    });
+}
+
+function refreshData() {
+    currencies.forEach(c => {
+        const delta = (Math.random() - 0.5) * 0.5;
+        c.change = parseFloat(delta.toFixed(2));
+        c.rate = parseFloat((c.rate + delta).toFixed(2));
+    });
+    
+    loadCurrencies();
+    document.getElementById('refreshIndicator').classList.remove('active');
+    isRefreshing = false;
+    showNotification('Данные обновлены', 'fas fa-sync-alt');
+}
+
+// ===================== SCROLL =====================
+function setupScrollAnimations() {
+    const header = document.getElementById('mainHeader');
+    let ticking = false;
+    
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const scrollTop = window.scrollY;
+                
+                if (scrollTop > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                
+                if (scrollTop > lastScrollTop && scrollTop > 200) {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                }
+                
+                lastScrollTop = Math.max(0, scrollTop);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+}
+
+// ===================== НАВИГАЦИЯ =====================
+function setupNavigation() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            switch(this.dataset.nav) {
+                case 'home':
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    break;
+                case 'cards':
+                    document.getElementById('bankCard').classList.toggle('flipped');
+                    showNotification('Управление картами', 'fas fa-credit-card');
+                    break;
+                case 'transfer':
+                    openTransferModal();
+                    break;
+                case 'stats':
+                    document.querySelector('.section-card:last-child').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    showNotification('Аналитика расходов', 'fas fa-chart-bar');
+                    break;
+                case 'profile':
+                    showNotification('Личный кабинет', 'fas fa-user');
+                    break;
+            }
+        });
+    });
+}
+
+// ===================== ГОЛОСОВОЕ УПРАВЛЕНИЕ =====================
+function setupVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    
+    voiceRecognition = new SpeechRecognition();
+    voiceRecognition.continuous = false;
+    voiceRecognition.interimResults = false;
+    voiceRecognition.lang = 'ru-RU';
+    
+    voiceRecognition.onstart = () => {
+        document.getElementById('voiceIndicator').classList.add('active');
+    };
+    
+    voiceRecognition.onresult = (event) => {
+        const text = event.results[0][0].transcript.toLowerCase();
+        processVoiceCommand(text);
+    };
+    
+    voiceRecognition.onend = () => {
+        document.getElementById('voiceIndicator').classList.remove('active');
+    };
+    
+    voiceRecognition.onerror = () => {
+        document.getElementById('voiceIndicator').classList.remove('active');
+        showNotification('Не удалось распознать голос', 'fas fa-microphone-slash');
+    };
+}
+
+function startVoiceCommand() {
+    if (!voiceRecognition) {
+        showNotification('Голосовое управление не поддерживается', 'fas fa-microphone-slash');
+        return;
+    }
+    try { voiceRecognition.start(); }
+    catch(e) { showNotification('Разрешите доступ к микрофону', 'fas fa-microphone-slash'); }
+}
+
+function processVoiceCommand(cmd) {
+    showNotification(`"${cmd}"`, 'fas fa-microphone', 2000);
+    
+    setTimeout(() => {
+        if (cmd.includes('перевод')) openTransferModal();
+        else if (cmd.includes('баланс')) showNotification('Баланс: 1 248 732 ₽', 'fas fa-eye');
+        else if (cmd.includes('оплат')) openPaymentModal();
+        else if (cmd.includes('тем')) toggleTheme();
+        else showNotification('Команда не распознана', 'fas fa-question-circle');
+    }, 500);
+}
+
+// ===================== 3D КАРТА =====================
+document.getElementById('bankCard').addEventListener('click', function() {
+    this.classList.toggle('flipped');
+});
+
+// ===================== ПАСХАЛКА =====================
+let logoTaps = 0;
+let logoTimer;
+
+document.getElementById('logo').addEventListener('click', function() {
+    logoTaps++;
+    clearTimeout(logoTimer);
+    
+    if (logoTaps === 3) {
+        logoTaps = 0;
+        showNotification('🎉 Секретная функция активирована!', 'fas fa-magic', 4000);
+        createConfetti();
+    } else {
+        logoTimer = setTimeout(() => { logoTaps = 0; }, 500);
+    }
+});
+
+function createConfetti() {
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+    
+    for (let i = 0; i < 40; i++) {
+        const el = document.createElement('div');
+        const size = 6 + Math.random() * 6;
+        el.style.cssText = `
+            position: fixed;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+            top: -10px;
+            left: ${Math.random() * 100}vw;
+            z-index: 10000;
+            pointer-events: none;
+        `;
+        document.body.appendChild(el);
+        
+        const anim = el.animate([
+            { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+            { transform: `translateY(${window.innerHeight + 20}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+        ], {
+            duration: 1500 + Math.random() * 2000,
+            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            delay: Math.random() * 300
+        });
+        
+        anim.onfinish = () => el.remove();
+    }
+}
+
+// ===================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ =====================
+function showQRScanner() { showNotification('Сканер QR-кодов', 'fas fa-qrcode'); }
+function openDepositModal() { showNotification('Открытие вклада', 'fas fa-piggy-bank'); }
+function showAtms() { showNotification('Поиск банкоматов', 'fas fa-map-marker-alt'); }
+function showCategories() { showNotification('Аналитика расходов', 'fas fa-chart-pie'); }
+function showAllTransactions() { showNotification('Все операции', 'fas fa-list'); }
+
+// ===================== PWA =====================
+function initPWA() {
+    // Динамический manifest
+    const manifest = {
+        name: "Neobank",
+        short_name: "Neobank",
+        description: "Современный мобильный банкинг",
+        theme_color: "#6366f1",
+        background_color: "#f8fafc",
+        display: "standalone",
+        orientation: "portrait",
+        scope: "/",
+        start_url: "/",
+        icons: [
+            { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236366f1' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='sans-serif' font-weight='bold'%3EN%3C/text%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml" }
+        ]
+    };
+    
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(blob);
+    document.head.appendChild(link);
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (!localStorage.getItem('pwaInstalled')) {
+            setTimeout(() => {
+                document.getElementById('installBanner').classList.add('active');
+            }, 15000);
+        }
+    });
+    
+    window.addEventListener('appinstalled', () => {
+        localStorage.setItem('pwaInstalled', 'true');
+        deferredPrompt = null;
+        showNotification('Приложение установлено!', 'fas fa-download');
+    });
+}
+
+function hideInstallPrompt() {
+    document.getElementById('installBanner').classList.remove('active');
+}
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+    }
+    hideInstallPrompt();
+}
+
+// ===================== БЕЙДЖ УВЕДОМЛЕНИЙ =====================
+setInterval(() => {
+    const badge = document.getElementById('notificationBadge');
+    let count = parseInt(badge.textContent);
+    if (Math.random() > 0.8 && count < 9) {
+        badge.textContent = ++count;
+    }
+}, 30000);
+</script>
 </body>
 </html>
