@@ -2062,7 +2062,7 @@
             <div class="header-top">
                 <div class="user-info" id="userInfo">
                     <div class="user-avatar">
-                        ИИ
+                        МС
                         <div class="online-dot"></div>
                     </div>
                     <div>
@@ -2341,7 +2341,7 @@
 // ========== GLOBALS ==========
 let currentTheme = localStorage.getItem('neoTheme') || 'light';
 let balanceHidden = localStorage.getItem('neoBalHidden') === 'true';
-let pinCode = '';
+let pinCode = '7469';
 let lastScroll = 0;
 let toastTimer = null;
 let currentStory = 0;
@@ -2506,7 +2506,7 @@ function updatePinDots() {
 }
 
 function verifyPin() {
-    if (pinCode === '1234') {
+    if (pinCode === '7469') {
         startApp();
     } else {
         const dots = document.querySelectorAll('.pin-dot');
@@ -2567,7 +2567,7 @@ function animateCounters() {
         };
         requestAnimationFrame(step);
     };
-    animate(document.getElementById('balanceWhole'), 248732, 1500);
+    animate(document.getElementById('balanceWhole'), 386532, 1500);
     animate(document.getElementById('balanceDecimal'), 48, 1500);
 }
 
@@ -3052,4 +3052,5 @@ function createConfetti() {
 </script>
 </body>
 </html>
+
 
